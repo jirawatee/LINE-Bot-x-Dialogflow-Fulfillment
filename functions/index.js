@@ -8,9 +8,6 @@ admin.initializeApp();
 const runtimeOpts = { timeoutSeconds: 8, memory: "4GB" }
 const region = "asia-southeast2"
 
-const BitlyClient = require("bitly").BitlyClient;
-const bitly = new BitlyClient(functions.config().bitly.access_token);
-
 exports.fulfillment = functions.region(region).runWith(runtimeOpts).https.onRequest((request, response) => {
   const agent = new WebhookClient({ request, response });
 
@@ -60,19 +57,12 @@ exports.fulfillment = functions.region(region).runWith(runtimeOpts).https.onRequ
     agent.add(doc.data().description);
     agent.add(payload);
 
-    /* const snapshot = await admin.database().ref("bmi").child(result).once("value")
+    /* const snapshot = await admin.database().ref("bmi").child(result).once("value");
     agent.add(snapshot.val());
     agent.add(payload); */
   }
 
-  async function shortenUrl(agent) {
-    const url = agent.parameters.url;
-    const res = await bitly.shorten(url);
-    agent.add(`Shorten URL: ${res.link}`);
-  }
-
   const intentMap = new Map();
   intentMap.set("BMI - custom - yes", bodyMassIndex);
-  intentMap.set("Shorten URL", shortenUrl);
   agent.handleRequest(intentMap);
 });
