@@ -4,9 +4,8 @@ const { WebhookClient, Payload } = require("dialogflow-fulfillment");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
-
-const runtimeOpts = { timeoutSeconds: 8, memory: "4GB" }
-const region = "asia-southeast2"
+const region = "asia-northeast1";
+const runtimeOpts = {timeoutSeconds: 8, memory: "1GB", minInstances: 1};
 
 exports.fulfillment = functions.region(region).runWith(runtimeOpts).https.onRequest((request, response) => {
   const agent = new WebhookClient({ request, response });
